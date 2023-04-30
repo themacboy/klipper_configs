@@ -1,1 +1,8 @@
- 
+backup/
+certs/
+comms/
+database/
+gcodes/
+logs/
+systemd/
+moonraker.asvc
