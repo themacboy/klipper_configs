@@ -1,1 +1,12 @@
- 
+backup/
+certs/
+comms/
+database/
+gcodes/
+logs/
+systemd/
+moonraker.asvc 
+.moonraker.uuid
+config/.moonraker.conf.bkp
+config/mainsail.cfg
+config/moonraker.conf
