@@ -753,3 +753,4 @@ Error configuring printer
 2023-09-08 14:05:58,896 [klippy_connection.py:_check_ready()] - Klippy ready
 2023-09-08 14:05:59,346 [data_store.py:_init_sensors()] - Configuring available sensors: ['temperature_sensor raspberry_pi', 'temperature_sensor Flsun_SR', 'heater_bed', 'extruder']
 2023-09-08 14:06:52,489 [job_state.py:_status_update()] - Job Started: handdoek_hanger_set2_gat_0.2mm_FlSun SR - PLA - JY Blanc__4h53m.gcode
+2023-09-08 15:00:41,474 [authorization.py:_prune_conn_handler()] - Trusted Connection Expired, IP: 192.168.0.31
