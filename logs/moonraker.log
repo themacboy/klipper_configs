@@ -741,3 +741,15 @@ Once the underlying issue is corrected, use the
 config, and restart the host software.
 Error configuring printer
 
+2023-09-08 14:00:09,263 [authorization.py:_check_trusted_connection()] - Trusted Connection Detected, IP: 192.168.0.31
+2023-09-08 14:00:09,528 [app.py:log_request()] - 101 GET /websocket (192.168.0.31) [_TRUSTED_USER_] 370.63ms
+2023-09-08 14:00:09,542 [websockets.py:open()] - Websocket Opened: ID: 1740060368, Proxied: True, User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36, Host Name: 192.168.0.34
+2023-09-08 14:00:09,619 [websockets.py:_handle_identify()] - Websocket 1740060368 Client Identified - Name: mainsail, Version: 2.7.0, Type: web
+2023-09-08 14:05:52,650 [klippy_connection.py:_on_connection_closed()] - Klippy Connection Removed
+2023-09-08 14:05:54,000 [klippy_connection.py:_do_connect()] - Klippy Connection Established
+2023-09-08 14:05:58,326 [klippy_connection.py:_request_initial_subscriptions()] - Webhooks Subscribed
+2023-09-08 14:05:58,329 [klippy_connection.py:_request_initial_subscriptions()] - GCode Output Subscribed
+2023-09-08 14:05:58,578 [job_state.py:_handle_started()] - Job state initialized: standby
+2023-09-08 14:05:58,896 [klippy_connection.py:_check_ready()] - Klippy ready
+2023-09-08 14:05:59,346 [data_store.py:_init_sensors()] - Configuring available sensors: ['temperature_sensor raspberry_pi', 'temperature_sensor Flsun_SR', 'heater_bed', 'extruder']
+2023-09-08 14:06:52,489 [job_state.py:_status_update()] - Job Started: handdoek_hanger_set2_gat_0.2mm_FlSun SR - PLA - JY Blanc__4h53m.gcode
