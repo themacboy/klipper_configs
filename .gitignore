@@ -8,3 +8,4 @@ systemd/*
 moonraker.asvc
 config/.moonraker.conf.bkp
 config/moonraker.conf
+.moonraker.uuid
