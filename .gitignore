@@ -5,8 +5,12 @@ database/
 gcodes/
 logs/
 systemd/
-moonraker.asvc 
+moonraker.asvc
 .moonraker.uuid
 config/.moonraker.conf.bkp
 config/mainsail.cfg
 config/moonraker.conf
+.git-credentials
+backup-mainsail.json
+github
+github.pub
