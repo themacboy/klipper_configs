@@ -1,0 +1,101 @@
+
+
+[gcode_macro PAUSE]
+rename_existing: BASE_PAUSE
+variable_pause_detected: 0
+gcode:
+    {% if pause_detected == 0 %}
+        M400 
+        {% set current_temp = printer.extruder.temperature %}
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=resume_temperature VALUE={current_temp}
+        SET_GCODE_VARIABLE MACRO=LOAD_MATERIAL VARIABLE=saved_temperature VALUE={current_temp}
+        SET_GCODE_VARIABLE MACRO=UNLOAD_MATERIAL VARIABLE=unsaved_temperature VALUE={current_temp}
+        {% set current_bed = printer["heater_bed"].temperature %}
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=resume_bed VALUE={current_bed}
+
+        {% set z = params.Z|default(10)|int %}                                                   
+        {% set e = params.E|default(2.5) %} 
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=zhop VALUE={z}                             
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=etemp VALUE={printer['extruder'].target}                                              
+        SAVE_GCODE_STATE NAME=PAUSE                                                                  
+        M25                                                                              
+        {% if (printer.gcode_move.position.z + z) < printer.toolhead.axis_maximum.z %}       
+        G91
+            M83
+            G1 E-{e} F2100
+        G1 Z{z} F900                                                                     
+        {% else %}
+        SET_GCODE_VARIABLE MACRO=RESUME VARIABLE=zhop VALUE=0
+        {% endif %}
+        SAVE_GCODE_STATE NAME=PAUSEPARK
+        G90                                                                                  
+        G1 X10 Y220 F6000
+        G1 E{e} F2100	
+        SET_IDLE_TIMEOUT TIMEOUT=43200        
+        SET_GCODE_VARIABLE MACRO=PAUSE VARIABLE=pause_detected VALUE=1
+        SET_GCODE_VARIABLE MACRO=LOAD_MATERIAL VARIABLE=load_detected VALUE=1
+        SET_GCODE_VARIABLE MACRO=UNLOAD_MATERIAL VARIABLE=unload_detected VALUE=1
+    {% endif %}
+
+
+[gcode_macro RESUME]
+rename_existing: BASE_RESUME
+variable_resume_temperature: 240
+variable_resume_bed: 60
+variable_zhop: 0
+variable_etemp: 0
+gcode:
+    M140 S{resume_bed}
+    M109 S{resume_temperature}
+
+    {% set e = params.E|default(2.5)|int %}                                          
+    SET_IDLE_TIMEOUT TIMEOUT={printer.configfile.settings.idle_timeout.timeout}
+    G91                                                                               
+    M83
+	  G1 E-{e} F900		
+    RESTORE_GCODE_STATE NAME=PAUSEPARK MOVE=1 MOVE_SPEED=100                 
+    {% if printer[printer.toolhead.extruder].temperature >= printer.configfile.settings.extruder.min_extrude_temp %}                                                
+      G1 Z{zhop * -1} F900
+	    G1 E{e+0.5} F900	  
+    {% else %}                      
+      G1 Z{zhop * -1} F900                                                     
+    {% endif %}
+    M400
+    RESTORE_GCODE_STATE NAME=PAUSE MOVE=1 MOVE_SPEED=60 
+    M24
+    SET_GCODE_VARIABLE MACRO=PAUSE VARIABLE=pause_detected VALUE=0
+    SET_FILAMENT_SENSOR SENSOR=fila ENABLE=1
+
+
+[gcode_macro CANCEL_PRINT]
+variable_runout_detected: 0
+rename_existing: BASE_CANCEL_PRINT
+gcode:
+    SET_IDLE_TIMEOUT TIMEOUT={printer.configfile.settings.idle_timeout.timeout} 
+    SDCARD_RESET_FILE
+    M400 							            ; wait for buffer to clear
+    G92 E0 							          ; zero the extruder
+    G1 E-1.0 F1200 				      ; retract filament
+    TURN_OFF_HEATERS
+    M107 							            ; turn off fan
+    G28 X0 Y0
+    M84
+    SET_GCODE_VARIABLE MACRO=PAUSE VARIABLE=pause_detected VALUE=0
+    SET_GCODE_VARIABLE MACRO=LOAD_MATERIAL VARIABLE=load_detected VALUE=0
+    SET_GCODE_VARIABLE MACRO=UNLOAD_MATERIAL VARIABLE=unload_detected VALUE=0
+
+[gcode_macro START_PRINT]
+gcode:
+    M400
+    Filter_fan_On
+[gcode_macro PAUSEPARK]
+gcode:
+    M400
+[gcode_macro END_PRINT]
+gcode:
+    G4 P10000
+    Side_fan_Off
+    Filter_fan_Off
+    SET_GCODE_VARIABLE MACRO=PAUSE VARIABLE=pause_detected VALUE=0
+    SET_GCODE_VARIABLE MACRO=LOAD_MATERIAL VARIABLE=load_detected VALUE=0
+    SET_GCODE_VARIABLE MACRO=UNLOAD_MATERIAL VARIABLE=unload_detected VALUE=0
